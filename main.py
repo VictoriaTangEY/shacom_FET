@@ -4,17 +4,31 @@ from pathlib import Path
 
 from input_handler import RunSetting, load_configuration_file, load_parameters
 from util.loggers import createLogHandler
+from main_calculation import (
+    run_listed_equity_and_corporate_bonds,
+    run_business_loans_and_unlisted_equity,
+    run_project_finance,
+    run_commercial_real_estate,
+    run_mortgages,
+    run_sovereign_debt,
+)
 
 
 def run_calculation(rc, logger, param=None):
     """
-    Placeholder for main calculation logic.
-    Replace this with your own processing (e.g. read input, compute, write output).
+    Orchestrate financed emissions calculation for all asset classes.
+    Each asset class has its own module under main_calculation.
     """
-    logger.info("Starting main calculation.")
-    # rc.in_data_path, rc.result_path, rc.report_path available for I/O
-    # param: dict of DataFrames from load_parameters(rc.param_path) if needed
-    logger.info("Main calculation complete.")
+    logger.info("Starting main financed emissions calculation.")
+
+    run_listed_equity_and_corporate_bonds(rc=rc, parent_logger=logger, param=param)
+    run_business_loans_and_unlisted_equity(rc=rc, parent_logger=logger, param=param)
+    run_project_finance(rc=rc, parent_logger=logger, param=param)
+    run_commercial_real_estate(rc=rc, parent_logger=logger, param=param)
+    run_mortgages(rc=rc, parent_logger=logger, param=param)
+    run_sovereign_debt(rc=rc, parent_logger=logger, param=param)
+
+    logger.info("Main financed emissions calculation complete.")
 
 
 def main(run_config):
