@@ -16,12 +16,7 @@ def run_all(
     instruments_splits: Dict[str, pd.DataFrame],
     param: Optional[Dict[str, pd.DataFrame]] = None,
 ) -> None:
-    """
-    High-level orchestrator for all PCAF asset classes.
 
-    This function assumes that `instruments_splits` has already been
-    prepared by the DataPreprocessor and simply calls each run_* function.
-    """
     logger.info("===================================================")
     logger.info("Starting PCAF calculation")
 

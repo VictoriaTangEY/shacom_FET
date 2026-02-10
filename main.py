@@ -29,7 +29,6 @@ def main(run_config):
     fe_logger = createLogHandler(
         "pcaf_calculaton", rc.log_path / "Log_pcaf_calculaton.log"
     )
-    fe_logger.info("Initialized pcaf_calculaton logger.")
 
     dp = DataPreprocessor(context=rc)
     try:
