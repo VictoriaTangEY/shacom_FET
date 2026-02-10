@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-class RunSetting:
+class run_setting:
     """Runtime environment built from config dict (paths, run options)."""
 
     def __init__(self, run_config):
