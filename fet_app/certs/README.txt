@@ -1,0 +1,1 @@
+This folder only needed when security cert is needed for network communication. But currently no needed for this application.

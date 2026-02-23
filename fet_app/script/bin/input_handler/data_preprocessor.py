@@ -17,11 +17,9 @@ class DataPreprocessor:
         try:
             df = pd.read_csv(instrument_path)
         except Exception as e:
-            logger.exception("Failed to load instrument_table: %s", e)
-            raise
+            raise RuntimeError(f"Failed to load instrument_table: {e}") from e
 
         if "PCAF_ASSET_CLASS" not in df.columns:
-            logger.error("Column 'PCAF_ASSET_CLASS' not found in instrument_table.")
             raise KeyError("PCAF_ASSET_CLASS column missing in instrument_table.")
 
         return df

@@ -10,18 +10,17 @@ class run_setting:
 
         self.run_yymm = rs["RUN_YYMM"]
         self.prev_yymm = rs["PREV_YYMM"]
-        self.master_path = Path(rs["MASTERPATH"])
-        self.output_path = Path(rs["OUTPUTPATH"])
+        self.run_path = Path(rs["RUN_PATH"])
         self.param_version = rs.get("PARAM_VERSION", self.run_yymm)
         self.run_mode = rs.get("RUN_MODE", 1)
 
-        self.param_path = self.master_path / str(self.run_yymm) / "parameter"
-        self.in_data_path = self.master_path / str(self.run_yymm) / "input data"
-        self.prev_in_data_path = self.master_path / str(self.prev_yymm) / "input data"
+        self.param_path = self.run_path / "parameter"
+        self.in_data_path = self.run_path / "data" / "input"
+        self.prev_in_data_path = self.run_path / "data" / "prev_input"
 
-        self.result_path = self.output_path / str(self.run_yymm) / "data" / "02_result"
-        self.report_path = self.output_path / str(self.run_yymm) / "data" / "03_report"
-        self.log_path = self.output_path / str(self.run_yymm) / "log"
+        self.result_path = self.run_path / "data" / "output"
+        self.report_path = self.run_path / "data" / "output"
+        self.log_path = self.run_path / "logs"
 
         const = c.get("CONSTANT", {})
         self.days_in_year = const.get("days_in_year", 365.25)

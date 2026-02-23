@@ -1,0 +1,33 @@
+2026-02-10 17:32:31,559 - main - INFO - ===================================================
+2026-02-10 17:32:31,559 - main - INFO - Start running...
+2026-02-10 17:32:31,563 - main - ERROR - Failed to load parameter workbook C:\Users\UV665AR\OneDrive - EY\5.SHACOM\99_data_server\20251231\parameter\modelParam.xlsx: [Errno 13] Permission denied: 'C:\\Users\\UV665AR\\OneDrive - EY\\5.SHACOM\\99_data_server\\20251231\\parameter\\modelParam.xlsx'
+Traceback (most recent call last):
+  File "C:\Users\UV665AR\OneDrive - EY\Documents\GitHub\shacom_FET\input_handler\load_parameters.py", line 35, in load_parameters
+    xl = pd.ExcelFile(wb_file)
+  File "C:\Users\UV665AR\AppData\Local\miniconda3\envs\test\Lib\site-packages\pandas\io\excel\_base.py", line 1550, in __init__
+    ext = inspect_excel_format(
+        content_or_path=path_or_buffer, storage_options=storage_options
+    )
+  File "C:\Users\UV665AR\AppData\Local\miniconda3\envs\test\Lib\site-packages\pandas\io\excel\_base.py", line 1402, in inspect_excel_format
+    with get_handle(
+         ~~~~~~~~~~^
+        content_or_path, "rb", storage_options=storage_options, is_text=False
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ) as handle:
+    ^
+  File "C:\Users\UV665AR\AppData\Local\miniconda3\envs\test\Lib\site-packages\pandas\io\common.py", line 882, in get_handle
+    handle = open(handle, ioargs.mode)
+PermissionError: [Errno 13] Permission denied: 'C:\\Users\\UV665AR\\OneDrive - EY\\5.SHACOM\\99_data_server\\20251231\\parameter\\modelParam.xlsx'
+2026-02-10 17:32:31,568 - main - ERROR - Parameter load failed: [Errno 13] Permission denied: 'C:\\Users\\UV665AR\\OneDrive - EY\\5.SHACOM\\99_data_server\\20251231\\parameter\\modelParam.xlsx'
+2026-02-10 17:33:16,774 - main - INFO - ===================================================
+2026-02-10 17:33:16,774 - main - INFO - Start running...
+2026-02-10 17:33:18,020 - main - INFO - Parameters loaded successfully
+2026-02-10 17:33:18,031 - main - INFO - Input data loaded successfully
+2026-02-10 17:33:18,031 - main - INFO - Starting PCAF calculation
+2026-02-10 17:33:18,033 - main - INFO - PCAF calculation complete
+2026-02-23 17:23:28,680 - main - INFO - ===================================================
+2026-02-23 17:23:28,680 - main - INFO - Start running...
+2026-02-23 17:23:30,140 - main - INFO - Parameters loaded successfully
+2026-02-23 17:23:30,168 - main - INFO - Input data loaded successfully
+2026-02-23 17:23:30,168 - main - INFO - Starting PCAF calculation
+2026-02-23 17:23:30,169 - main - INFO - PCAF calculation complete

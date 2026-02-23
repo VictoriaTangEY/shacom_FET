@@ -18,9 +18,12 @@ def load_parameters(parm_path, logger=None):
     """
     parm_path = Path(parm_path)
     if not parm_path.exists():
+        msg = f"Parameter path does not exist: {parm_path}"
         if logger is not None:
-            logger.warning("Parameter path does not exist: %s", parm_path)
-        return {}
+            logger.error(msg)
+        else:
+            print(msg)
+        raise FileNotFoundError(msg)
 
     param = {}
     for pattern in ("*Param.xlsx", "*Template.xlsx"):
@@ -33,7 +36,10 @@ def load_parameters(parm_path, logger=None):
                     param[sheet] = pd.read_excel(wb_file, sheet_name=sheet)
             except Exception as e:
                 if logger is not None:
-                    logger.exception("Failed to load parameter workbook %s: %s", wb_file, e)
+                    logger.exception(
+                        "Failed to load parameter workbook %s: %s", wb_file, e
+                    )
                 else:
                     print(f"Failed to load {wb_file}: {e}")
+                raise
     return param

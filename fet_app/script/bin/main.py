@@ -17,14 +17,20 @@ def main(run_config):
     main_logger = createLogHandler("main", rc.log_path / "Log_file_main.log")
     main_logger.info("===================================================")
     main_logger.info("Start running...")
+    print("===================================================")
+    print("Start running...")
 
     param = {}
     if rc.param_path.exists():
         try:
             param = load_parameters(rc.param_path, logger=main_logger)
             main_logger.info("Parameters loaded successfully")
+            print("Parameters loaded successfully")
         except Exception as e:
-            main_logger.exception("Parameter load failed: %s", e)
+            msg = f"Parameter load failed: {e}"
+            main_logger.error(msg)
+            print(msg)
+            return
 
     fe_logger = createLogHandler(
         "pcaf_calculaton", rc.log_path / "Log_pcaf_calculaton.log"
@@ -34,17 +40,24 @@ def main(run_config):
     try:
         splits = dp.load_and_split_instruments(logger=fe_logger)
         main_logger.info("Input data loaded successfully")
+        print("Input data loaded successfully")
     except Exception as e:
-        main_logger.exception("Input data load failed: %s", e)
-        raise
+        msg = f"Input data load failed: {e}"
+        main_logger.error(msg)
+        print(msg)
+        return
 
     try:
         main_logger.info("Starting PCAF calculation")
+        print("Starting PCAF calculation")
         run_pcaf_all(rc=rc, logger=fe_logger, instruments_splits=splits, param=param)
         main_logger.info("PCAF calculation complete")
+        print("PCAF calculation complete")
     except Exception as e:
-        main_logger.exception("Calculation failed: %s", e)
-        raise
+        msg = f"Calculation failed: {e}"
+        main_logger.error(msg)
+        print(msg)
+        return
     finally:
         fe_logger.handlers.clear()
         main_logger.handlers.clear()
