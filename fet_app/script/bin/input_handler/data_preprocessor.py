@@ -19,9 +19,7 @@ class DataPreprocessor:
         except Exception as e:
             raise RuntimeError(f"Failed to load instrument_table: {e}") from e
 
-        if "PCAF_ASSET_CLASS" not in df.columns:
-            raise KeyError("PCAF_ASSET_CLASS column missing in instrument_table.")
-
+        df.columns = [str(c).strip() for c in df.columns]
         return df
 
     def split_by_pcaf_asset_class(self, df: pd.DataFrame) -> Dict[str, pd.DataFrame]:

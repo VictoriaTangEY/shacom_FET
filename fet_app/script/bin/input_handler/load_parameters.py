@@ -1,7 +1,24 @@
 import json
 from pathlib import Path
+from typing import Dict
 
 import pandas as pd
+
+# Parameter Excel sheets: first N rows are metadata (Parameter name, description, mandatory, data type); data starts after.
+PARAM_METADATA_ROWS = 4
+
+
+def get_parameter_data(param: Dict[str, pd.DataFrame], sheet_name: str) -> pd.DataFrame:
+    """
+    Return the data portion of a parameter sheet (skip metadata rows).
+    Use this for lookups; the raw sheet has column names in row 0 but data starts at row PARAM_METADATA_ROWS.
+    """
+    if not param or sheet_name not in param:
+        return pd.DataFrame()
+    df = param[sheet_name]
+    if df is None or df.empty or len(df) <= PARAM_METADATA_ROWS:
+        return pd.DataFrame()
+    return df.iloc[PARAM_METADATA_ROWS:].copy()
 
 
 def load_configuration_file(config_path):
