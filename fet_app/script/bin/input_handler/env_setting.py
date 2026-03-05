@@ -9,10 +9,7 @@ class run_setting:
         rs = c["RUN_SETTING"]
 
         self.run_yymm = rs["RUN_YYMM"]
-        self.prev_yymm = rs["PREV_YYMM"]
         self.run_path = Path(rs["RUN_PATH"])
-        self.param_version = rs.get("PARAM_VERSION", self.run_yymm)
-        self.run_mode = rs.get("RUN_MODE", 1)
 
         self.param_path = self.run_path / "parameter"
         self.in_data_path = self.run_path / "data" / "input"

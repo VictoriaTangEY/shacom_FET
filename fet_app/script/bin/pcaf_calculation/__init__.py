@@ -9,6 +9,7 @@ from .all_run import run_all as run_pcaf_all
 __all__ = [
     "run_listed_equity_and_corporate_bonds",
     "run_business_loans_and_unlisted_equity",
+    "BusinessLoansAndUnlistedEquity",
     "run_project_finance",
     "run_commercial_real_estate",
     "run_mortgages",

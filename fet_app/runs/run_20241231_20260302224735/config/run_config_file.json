@@ -1,9 +1,7 @@
 {
   "RUN_SETTING": {
-    "RUN_YYMM": 20251231,
-    "PREV_YYMM": 20251130,
-    "PARAM_VERSION": "20251231",
-    "RUN_MODE": 1
+    "RUN_YYMM": 20241231,
+    "RUN_PATH": "C:\\Users\\UV665AR\\OneDrive - EY\\Documents\\GitHub\\shacom_FET\\fet_app\\runs\\run_20241231_20260302224735"
   },
   "CONSTANT": {
     "days_in_year": 365.25,

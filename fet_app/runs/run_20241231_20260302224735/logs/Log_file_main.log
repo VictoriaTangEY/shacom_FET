@@ -1,0 +1,6 @@
+2026-03-02 22:47:36,048 - main - INFO - ===================================================
+2026-03-02 22:47:36,048 - main - INFO - Start running...
+2026-03-02 22:47:37,699 - main - INFO - Parameters loaded successfully
+2026-03-02 22:47:37,718 - main - INFO - Input data loaded successfully
+2026-03-02 22:47:37,718 - main - INFO - Starting PCAF calculation
+2026-03-02 22:47:37,750 - main - ERROR - Calculation failed: You are trying to merge on float64 and object columns for key 'INDUSTRY_CLASSIFICATION_CODE'. If you wish to proceed you should use pd.concat
