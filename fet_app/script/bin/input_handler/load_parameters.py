@@ -5,7 +5,8 @@ from typing import Dict
 import pandas as pd
 
 # Parameter Excel sheets: first N rows are metadata (Parameter name, description, mandatory, data type); data starts after.
-PARAM_METADATA_ROWS = 4
+# Row 1 is treated as header by pandas, so metadata occupies rows 2-4 in the DataFrame.
+PARAM_METADATA_ROWS = 3
 
 
 def get_parameter_data(param: Dict[str, pd.DataFrame], sheet_name: str) -> pd.DataFrame:

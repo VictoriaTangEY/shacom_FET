@@ -1,11 +1,12 @@
 import argparse
 import json
+import warnings
 from pathlib import Path
-
 from input_handler import run_setting, load_parameters, DataPreprocessor
 from util.loggers import createLogHandler
 from pcaf_calculation import run_pcaf_all
 
+warnings.filterwarnings("ignore", category=FutureWarning,)
 
 def main(run_config):
     c = run_config.copy()

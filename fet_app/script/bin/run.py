@@ -1,10 +1,10 @@
 """
-Entry point: run setup (create run folder, copy files) then execute main.
+Entry point: run setup (create run folder, copy files) then execute run_main.
 """
 import json
 from pathlib import Path
 
-from main import main as run_main
+from run_main import main as run_main
 from run_setup import setup_run
 
 

@@ -1,44 +1,21 @@
 import numpy as np
 import pandas as pd
-from typing import Dict, Optional, Any, Tuple
+from typing import Dict, Optional, Tuple, Any
 from input_handler.load_parameters import get_parameter_data
-from .business_loans_and_unlisted_equity import BusinessLoansAndUnlistedEquity, NA_STR
+from .all_general_calculator import GeneralPcafCalculator, NA_STR
 
 
-class Mortgages(BusinessLoansAndUnlistedEquity):
-
-    def __init__(self, rc, logger, instruments=None, param=None):
-        super().__init__(rc, logger, instruments, param)
+class Mortgages(GeneralPcafCalculator):
 
     def _merge_parameter_tables(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Merges parameter tables onto df so each row has mapped columns.
-        - Energy_Consumption_Table: on COLLATERAL_TYPE -> adds Energy_Consumption_Table
-        """
-        df = super()._merge_parameter_tables(df)
-        
-        # Energy_Consumption_Table: on COLLATERAL_TYPE
-        energy_df = get_parameter_data(self.param, "Energy_Consumption_Table")
-        if not energy_df.empty and "COLLATERAL_TYPE" in energy_df.columns and "Energy_Consumption_Table" in energy_df.columns:
-            df = df.merge(
-                energy_df[["COLLATERAL_TYPE", "Energy_Consumption_Table"]].drop_duplicates(subset=["COLLATERAL_TYPE"]),
-                on="COLLATERAL_TYPE",
-                how="left",
-            )
-        else:
-            df["Energy_Consumption_Table"] = np.nan
-
+        df = df.copy()
+        df = self._merge_emission_factor(df)
+        df = self._merge_energy_consumption_table(df)
         return df
 
-    @staticmethod
-    def _attribution_factor_vectorized(df: pd.DataFrame) -> pd.Series:
-        """attribution_factor = OUTSTANDING_BALANCE_LCY / PROPERTY_VALUE_AT_ORIGINATION."""
-        value = pd.to_numeric(df["PROPERTY_VALUE_AT_ORIGINATION"], errors="coerce")
-        bal = pd.to_numeric(df["OUTSTANDING_BALANCE_LCY"], errors="coerce")
-        af = np.where(value == 0, np.nan, bal / value)
-        return pd.Series(af, index=df.index)
-
     def _energy_consumption_vectorized(self, df: pd.DataFrame) -> Tuple[pd.Series, pd.Series]:
-        """Determine energy consumption option and consumption for all rows.
+        """
+        Determine energy consumption option and consumption for all rows.
         Returns (classify_option Series, building_energy Series).
         """
         opt = pd.Series(NA_STR, index=df.index)
@@ -60,17 +37,25 @@ class Mortgages(BusinessLoansAndUnlistedEquity):
             else pd.Series(np.nan, index=df.index)
         )
 
-        # Option 1: Actual energy intensity
+        # Option 1: Actual energy consumption
         mask_1 = self._has_value(actual_intensity) & self._has_value(area)
         opt = opt.where(~mask_1, "1")
         energy = energy.where(~mask_1, actual_intensity * area)
 
-        # Option 2: Estimated energy intensity by building type
+        # Option 2: Estimated consumption by building type
         mask_2 = (opt == NA_STR) & self._has_value(est_intensity) & self._has_value(area)
         opt = opt.where(~mask_2, "2")
         energy = energy.where(~mask_2, est_intensity * area)
 
         return opt, energy
+
+    @staticmethod
+    def _attribution_factor_vectorized(df: pd.DataFrame) -> pd.Series:
+        """attribution_factor = OUTSTANDING_BALANCE_LCY / PROPERTY_VALUE_AT_ORIGINATION."""
+        value = pd.to_numeric(df["PROPERTY_VALUE_AT_ORIGINATION"], errors="coerce")
+        bal = pd.to_numeric(df["OUTSTANDING_BALANCE_LCY"], errors="coerce")
+        af = np.where(value == 0, np.nan, bal / value)
+        return pd.Series(af, index=df.index)
 
     def run(self) -> pd.DataFrame:
         """Execute the full calculation pipeline and write output."""
@@ -131,6 +116,9 @@ class Mortgages(BusinessLoansAndUnlistedEquity):
         for col in ["CLASSIFY_OPTION", "ATTRIBUTION_FACTOR", "BUILDING_EMISSION", "FINANCED_EMISSION"]:
             if col in out_new.columns:
                 out_new[col] = out_new[col].apply(self._to_display_value)
+        out_new = out_new.drop(
+            columns=[c for c in ["Energy_Consumption_Table", "ENERGY_CONSUMPTION"] if c in out_new.columns]
+        )
 
         try:
             if out_path.exists():
@@ -142,9 +130,9 @@ class Mortgages(BusinessLoansAndUnlistedEquity):
             out_all = out_new
 
         cols = list(out_all.columns)
-        if "FINANCED_EMISSION" in cols and "BUILDING_EMISSION" in cols:
+        if "COMPANY_EMISSION" in cols and "BUILDING_EMISSION" in cols:
             cols.remove("BUILDING_EMISSION")
-            insert_idx = cols.index("FINANCED_EMISSION") + 1
+            insert_idx = cols.index("COMPANY_EMISSION") + 1
             cols.insert(insert_idx, "BUILDING_EMISSION")
             out_all = out_all[cols]
 
