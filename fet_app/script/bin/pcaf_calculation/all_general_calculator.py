@@ -3,7 +3,9 @@ import pandas as pd
 from typing import Dict, Optional, Any, List
 from input_handler.load_parameters import get_parameter_data
 
+# NA string
 NA_STR = "Invalid"
+# Output columns
 OUTPUT_COLUMNS = [
     "CLASSIFY_OPTION",
     "COMPANY_EMISSION",
@@ -99,6 +101,7 @@ class GeneralPcafCalculator:
             return NA_STR
         return x
 
+    # Write output to output.csv file
     def _write_output(
         self,
         df: pd.DataFrame,

@@ -11,7 +11,7 @@ from .mortgages import run_mortgages
 from .sovereign_debt import run_sovereign_debt
 
 
-def run_all(
+def run_pcaf_all(
     rc,
     logger,
     instruments_splits: Dict[str, pd.DataFrame],

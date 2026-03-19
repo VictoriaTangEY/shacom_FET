@@ -9,11 +9,8 @@ import pandas as pd
 PARAM_METADATA_ROWS = 3
 
 
+# Rread parameter: return the data portion of a parameter sheet (skip metadata rows)
 def get_parameter_data(param: Dict[str, pd.DataFrame], sheet_name: str) -> pd.DataFrame:
-    """
-    Return the data portion of a parameter sheet (skip metadata rows).
-    Use this for lookups; the raw sheet has column names in row 0 but data starts at row PARAM_METADATA_ROWS.
-    """
     if not param or sheet_name not in param:
         return pd.DataFrame()
     df = param[sheet_name]

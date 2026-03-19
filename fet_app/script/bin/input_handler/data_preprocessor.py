@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Dict
 import pandas as pd
+from run_setup import INPUT_INSTRUMENT_FILE
 
 
 class DataPreprocessor:
@@ -8,12 +9,9 @@ class DataPreprocessor:
     def __init__(self, context):
         self.rc = context
 
+    # Load instrument_table.csv from input data path
     def load_instrument_table(self, logger) -> pd.DataFrame:
-        """
-        Load the full instrument_table as a pandas DataFrame.
-        """
-        instrument_path = self.rc.in_data_path / f"instrument_table.{self.rc.input_data_ext}"
-
+        instrument_path = self.rc.in_data_path / INPUT_INSTRUMENT_FILE
         try:
             df = pd.read_csv(instrument_path)
         except Exception as e:
@@ -22,11 +20,8 @@ class DataPreprocessor:
         df.columns = [str(c).strip() for c in df.columns]
         return df
 
+    # Split the input instrument DataFrame into subsets by PCAF_ASSET_CLASS
     def split_by_pcaf_asset_class(self, df: pd.DataFrame) -> Dict[str, pd.DataFrame]:
-        """
-        Split the input instrument DataFrame into subsets by PCAF_ASSET_CLASS.
-        Returns a dict mapping asset class code to its subset DataFrame.
-        """
         splits: Dict[str, pd.DataFrame] = {}
         for code in ["LECB", "BLUE", "PROJFIN", "CRE", "RESMTG", "SOVBND"]:
             splits[code] = df[df["PCAF_ASSET_CLASS"] == code].copy()

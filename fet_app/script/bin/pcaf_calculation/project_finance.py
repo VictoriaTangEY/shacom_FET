@@ -67,7 +67,7 @@ class ProjectFinance(GeneralPcafCalculator):
 
         df = self._merge_parameter_tables(self.instruments)
 
-        # Step 1: Classify option and company emission
+        # Step 1: Classify option and project emission
         classify_option, project_emission = self._classify_and_project_emission_vectorized(df)
         df["CLASSIFY_OPTION"] = classify_option
         df["PROJECT_EMISSION"] = project_emission

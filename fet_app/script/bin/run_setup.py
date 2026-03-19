@@ -4,6 +4,7 @@ from datetime import datetime
 from pathlib import Path
 import pandas as pd
 
+# Input file name
 INPUT_INSTRUMENT_FILE = "instrument_table.csv"
 
 

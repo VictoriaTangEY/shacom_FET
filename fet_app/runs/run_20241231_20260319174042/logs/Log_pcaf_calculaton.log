@@ -1,0 +1,13 @@
+2026-03-19 17:40:44,870 - pcaf_calculaton - INFO - ===================================================
+2026-03-19 17:40:44,871 - pcaf_calculaton - INFO - Starting PCAF calculation
+2026-03-19 17:40:44,887 - pcaf_calculaton - INFO - Starting calculation for business loans and unlisted equity
+2026-03-19 17:40:44,976 - pcaf_calculaton - INFO - Starting calculation for listed equity and corporate bonds
+2026-03-19 17:40:45,021 - pcaf_calculaton - WARNING - LECB: CONTRACT_ID=0001681438 has no applicable classify option; CLASSIFY_OPTION=NA, COMPANY_EMISSION=NA. Please check input data.
+2026-03-19 17:40:45,083 - pcaf_calculaton - INFO - Starting calculation for mortgages
+2026-03-19 17:40:45,157 - pcaf_calculaton - INFO - Starting calculation for commercial real estate
+2026-03-19 17:40:45,235 - pcaf_calculaton - INFO - Starting calculation for project finance
+2026-03-19 17:40:45,257 - pcaf_calculaton - WARNING - PROJFIN: CONTRACT_ID=1000766111 has no applicable classify option; CLASSIFY_OPTION=NA, PROJECT_EMISSION=NA. Please check input data.
+2026-03-19 17:40:45,261 - pcaf_calculaton - WARNING - PROJFIN: CONTRACT_ID=1000766111 has TOTAL_EQUITY_MILLION_HKD + TOTAL_DEBT_MILLION_HKD = 0; ATTRIBUTION_FACTOR=NA. Please check input data.
+2026-03-19 17:40:45,331 - pcaf_calculaton - INFO - Starting calculation for sovereign debt
+2026-03-19 17:40:45,355 - pcaf_calculaton - WARNING - SOVBND: CONTRACT_ID=0001681767 has no applicable classify option; CLASSIFY_OPTION=NA, SOVEREIGN_EMISSION=NA. Please check input data.
+2026-03-19 17:40:45,421 - pcaf_calculaton - INFO - PCAF calculation completed
