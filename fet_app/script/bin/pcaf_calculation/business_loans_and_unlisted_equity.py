@@ -111,14 +111,12 @@ class BusinessLoansAndUnlistedEquity(GeneralPcafCalculator):
         )
         df["FINANCED_EMISSION"] = pd.Series(financed, index=df.index)
 
-        # Write output with explicit NA for problem rows
-        self.rc.result_path.mkdir(parents=True, exist_ok=True)
-        out_path = self.rc.result_path / "output.csv"
-        out = df.copy()
-        for col in ["CLASSIFY_OPTION", "COMPANY_EMISSION", "ATTRIBUTION_FACTOR", "FINANCED_EMISSION"]:
-            out[col] = out[col].apply(self._to_display_value)
-        out.to_csv(out_path, index=False, encoding="utf-8")
-
+        # Step 4: Write output
+        self._write_output(
+            df,
+            output_columns=["CLASSIFY_OPTION", "COMPANY_EMISSION", "ATTRIBUTION_FACTOR", "FINANCED_EMISSION"],
+            append=False,
+        )
         return df
 
 

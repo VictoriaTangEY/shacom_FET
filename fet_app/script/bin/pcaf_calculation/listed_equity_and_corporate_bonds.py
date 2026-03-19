@@ -104,25 +104,12 @@ class ListedEquityAndCorporateBonds(GeneralPcafCalculator):
         )
         df["FINANCED_EMISSION"] = pd.Series(financed, index=df.index)
 
-        # Write output, append to existing BLUE output if present
-        self.rc.result_path.mkdir(parents=True, exist_ok=True)
-        out_path = self.rc.result_path / "output.csv"
-        out_new = df.copy()
-        for col in ["CLASSIFY_OPTION", "COMPANY_EMISSION", "ATTRIBUTION_FACTOR", "FINANCED_EMISSION"]:
-            if col in out_new.columns:
-                out_new[col] = out_new[col].apply(self._to_display_value)
-
-        try:
-            if out_path.exists():
-                existing = pd.read_csv(out_path, dtype=str)
-                out_all = pd.concat([existing, out_new], ignore_index=True, sort=False)
-            else:
-                out_all = out_new
-        except Exception:
-            out_all = out_new
-
-        out_all.to_csv(out_path, index=False, encoding="utf-8")
-
+        # Step 4: Write output
+        self._write_output(
+            df,
+            output_columns=["CLASSIFY_OPTION", "COMPANY_EMISSION", "ATTRIBUTION_FACTOR", "FINANCED_EMISSION"],
+            append=True,
+        )
         return df
 
 

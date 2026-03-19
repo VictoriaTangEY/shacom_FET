@@ -38,11 +38,13 @@ class CommercialRealEstate(GeneralPcafCalculator):
         )
 
         # Option 1: Actual energy consumption
+        # building_energy = PROPERTY_ACTUAL_ENERGY_CONSUMPTIONESTIMATED × GROSS_FLOOR_AREA
         mask_1 = self._has_value(actual_intensity) & self._has_value(area)
         opt = opt.where(~mask_1, "1")
         energy = energy.where(~mask_1, actual_intensity * area)
 
         # Option 2: Estimated consumption by building type
+        # building_energy = Energy_Consumption_Table × GROSS_FLOOR_AREA
         mask_2 = (opt == NA_STR) & self._has_value(est_intensity) & self._has_value(area)
         opt = opt.where(~mask_2, "2")
         energy = energy.where(~mask_2, est_intensity * area)
@@ -79,9 +81,9 @@ class CommercialRealEstate(GeneralPcafCalculator):
         df["ATTRIBUTION_FACTOR"] = attribution_factor
 
         # Step 2: Classify option and building energy consumption
-        classify_option, energy_consumption = self._energy_consumption_vectorized(df)
+        classify_option, building_energy = self._energy_consumption_vectorized(df)
         df["CLASSIFY_OPTION"] = classify_option
-        df["ENERGY_CONSUMPTION"] = energy_consumption
+        df = df.drop(columns=["Energy_Consumption_Table"], errors="ignore")
 
         emission_factor = (
             pd.to_numeric(df["EMISSION_FACTOR"], errors="coerce")
@@ -90,17 +92,17 @@ class CommercialRealEstate(GeneralPcafCalculator):
         )
 
         # Step 3: Building emission and financed emission
-        energy_series = df["ENERGY_CONSUMPTION"]
-
+        # BUILDING_EMISSION = building_energy × EMISSION_FACTOR
         building_emission = np.where(
-            (energy_series == NA_STR) | pd.isna(emission_factor),
+            (building_energy == NA_STR) | pd.isna(emission_factor),
             NA_STR,
-            pd.to_numeric(energy_series, errors="coerce") * emission_factor,
+            pd.to_numeric(building_energy, errors="coerce") * emission_factor,
         )
         df["BUILDING_EMISSION"] = pd.Series(building_emission, index=df.index)
 
         af_series = df["ATTRIBUTION_FACTOR"]
 
+        # FINANCED_EMISSION = ATTRIBUTION_FACTOR × BUILDING_EMISSION
         financed = np.where(
             (af_series == NA_STR) | (df["BUILDING_EMISSION"] == NA_STR),
             NA_STR,
@@ -109,35 +111,12 @@ class CommercialRealEstate(GeneralPcafCalculator):
         )
         df["FINANCED_EMISSION"] = pd.Series(financed, index=df.index)
 
-        # Write output with explicit NA for problem rows
-        self.rc.result_path.mkdir(parents=True, exist_ok=True)
-        out_path = self.rc.result_path / "output.csv"
-        out_new = df.copy()
-        for col in ["CLASSIFY_OPTION", "ATTRIBUTION_FACTOR", "BUILDING_EMISSION", "FINANCED_EMISSION"]:
-            if col in out_new.columns:
-                out_new[col] = out_new[col].apply(self._to_display_value)
-        out_new = out_new.drop(
-            columns=[c for c in ["Energy_Consumption_Table", "ENERGY_CONSUMPTION"] if c in out_new.columns]
+        # Step 4: Write output
+        self._write_output(
+            df,
+            output_columns=["CLASSIFY_OPTION", "ATTRIBUTION_FACTOR", "BUILDING_EMISSION", "FINANCED_EMISSION"],
+            append=True,
         )
-
-        try:
-            if out_path.exists():
-                existing = pd.read_csv(out_path, dtype=str)
-                out_all = pd.concat([existing, out_new], ignore_index=True, sort=False)
-            else:
-                out_all = out_new
-        except Exception:
-            out_all = out_new
-
-        cols = list(out_all.columns)
-        if "COMPANY_EMISSION" in cols and "BUILDING_EMISSION" in cols:
-            cols.remove("BUILDING_EMISSION")
-            insert_idx = cols.index("COMPANY_EMISSION") + 1
-            cols.insert(insert_idx, "BUILDING_EMISSION")
-            out_all = out_all[cols]
-
-        out_all.to_csv(out_path, index=False, encoding="utf-8")
-
         return df
 
 

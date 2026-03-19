@@ -1,9 +1,18 @@
 import numpy as np
 import pandas as pd
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, List
 from input_handler.load_parameters import get_parameter_data
 
 NA_STR = "Invalid"
+OUTPUT_COLUMNS = [
+    "CLASSIFY_OPTION",
+    "COMPANY_EMISSION",
+    "BUILDING_EMISSION",
+    "PROJECT_EMISSION",
+    "SOVEREIGN_EMISSION",
+    "ATTRIBUTION_FACTOR",
+    "FINANCED_EMISSION",
+]
 
 
 class GeneralPcafCalculator:
@@ -13,6 +22,13 @@ class GeneralPcafCalculator:
         self.logger = logger
         self.instruments = instruments.copy() if instruments is not None else pd.DataFrame()
         self.param = param or {}
+        self._ensure_output_columns()
+
+    # Add output columns
+    def _ensure_output_columns(self) -> None:
+        for col in OUTPUT_COLUMNS:
+            if col not in self.instruments.columns:
+                self.instruments[col] = np.nan
 
     # Left-merge Emission_Factor on COUNTRY_CODE -> adds EMISSION_FACTOR
     def _merge_emission_factor(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -82,4 +98,29 @@ class GeneralPcafCalculator:
         if isinstance(x, str) and x.strip() == "":
             return NA_STR
         return x
+
+    def _write_output(
+        self,
+        df: pd.DataFrame,
+        output_columns: List[str],
+        append: bool = False,
+    ) -> None:
+        self.rc.result_path.mkdir(parents=True, exist_ok=True)
+        out_path = self.rc.result_path / "output.csv"
+        out = df.copy()
+        for col in output_columns:
+            if col in out.columns:
+                out[col] = out[col].apply(self._to_display_value)
+        if append and out_path.exists():
+            try:
+                existing = pd.read_csv(out_path, dtype=str)
+                out_all = pd.concat([existing, out], ignore_index=True, sort=False)
+            except Exception:
+                out_all = out
+        else:
+            out_all = out
+        non_output_cols = [c for c in out_all.columns if c not in OUTPUT_COLUMNS]
+        output_cols_ordered = [c for c in OUTPUT_COLUMNS if c in out_all.columns]
+        out_all = out_all[non_output_cols + output_cols_ordered]
+        out_all.to_csv(out_path, index=False, encoding="utf-8")
 
